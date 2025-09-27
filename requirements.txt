@@ -1,0 +1,16 @@
+# Web scraping
+selenium
+webdriver-manager
+requests
+beautifulsoup4
+lxml
+
+# Banco de dados (Supabase)
+supabase
+psycopg2-binary
+# Utilidades
+schedule
+pandas
+python-dotenv
+pymysql
+sqlalchemy
