@@ -8,9 +8,10 @@ lxml
 # Banco de dados (Supabase)
 supabase
 psycopg2-binary
+sqlalchemy
+
 # Utilidades
 schedule
 pandas
 python-dotenv
 pymysql
-sqlalchemy
