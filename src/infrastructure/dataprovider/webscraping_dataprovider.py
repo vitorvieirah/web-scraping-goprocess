@@ -1,5 +1,7 @@
+from selenium import webdriver
 
 class WebScrapingDataProvider:
 
     def raspar(self):
-        return None
+        driver = webdriver.Chrome()
+        driver.get("https://inspectos.com/sistema/index.html#/home")
