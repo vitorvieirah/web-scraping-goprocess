@@ -4,6 +4,7 @@ from src.infrastructure.entity.pericia_entity import PericiaEntity
 from src.config.database import SessionLocal
 from src.infrastructure.mapper.mapper_pericia import PericiaMapper
 from src.infrastructure.exception.DataProviderException import DataProviderException
+from src.domain.pericia import Pericia
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +12,7 @@ class PericiaDataprovider:
     def __init__(self, pericia_mapper: PericiaMapper):
         self.pericia_mapper = pericia_mapper
 
-    def salvar(self, pericia: PericiaEntity):
+    def salvar(self, pericia: Pericia) -> Pericia:
         session = SessionLocal()
         pericia_entity = self.pericia_mapper.paraEntity(pericia=pericia)
         try:
