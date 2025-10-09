@@ -12,16 +12,8 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 
 logger = logging.getLogger(__name__)
 
-class WebScrapingDataProvider:
 
-    """
-    WebScrapingDataProvider (Selenium)
-    - Inicia o Chrome via webdriver-manager (evita lidar com chromedriver manual).
-    - Recebe configurações de seletores (ex.: CSS para campo usuário/senha/botão) e o login_url.
-    - Usa WebDriverWait + expected_conditions para robustez.
-    - Faz login, valida sucesso (espera algum elemento), e então raspa os itens.
-    - Exporta os dados como List[dict] para o Service.
-    """
+class WebScrapingDataProvider:
 
     def __init__(self, headless: Optional[bool] = False, timeout: int = 12):
         options = webdriver.ChromeOptions()
@@ -55,3 +47,20 @@ class WebScrapingDataProvider:
 
         time.sleep(5)
         print("Login enviado com sucesso!")
+
+    def raspar(self):
+        wait = WebDriverWait(self.driver, 15)  # aumenta timeout
+
+        # seleciona o "ENTRAR" da segunda div filha
+        entrar_btn = wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "(//div[contains(@class,'row')]/div[contains(@class,'col-3')])[2]//div[text()='ENTRAR']")
+            )
+        )
+
+        entrar_btn.click()
+
+        time.sleep(5)
+        print("Parte 2 feita!")
+
+
