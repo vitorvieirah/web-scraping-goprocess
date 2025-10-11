@@ -1,14 +1,14 @@
 import logging
-import os
 import time
-from typing import List, Dict, Optional
+from typing import Optional
+
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.webdriver.support.ui import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
 
 logger = logging.getLogger(__name__)
 
@@ -45,13 +45,11 @@ class WebScrapingDataProvider:
 
         self.driver.find_element(By.ID, "enter").click()
 
-        time.sleep(5)
         print("Login enviado com sucesso!")
 
     def raspar(self):
-        wait = WebDriverWait(self.driver, 15)  # aumenta timeout
+        wait = WebDriverWait(self.driver, 15)
 
-        # seleciona o "ENTRAR" da segunda div filha
         entrar_btn = wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "(//div[contains(@class,'row')]/div[contains(@class,'col-3')])[2]//div[text()='ENTRAR']")
@@ -59,6 +57,16 @@ class WebScrapingDataProvider:
         )
 
         entrar_btn.click()
+
+        div_aguardando_aceite = wait.until(EC.element_to_be_clickable((
+            By.XPATH,
+            "//div[contains(@class, 'panel-heading')]"
+            "[.//span[contains(text(), 'Aguardando Aceite')]]"
+            "/following-sibling::div[contains(@class, 'panel-body')]"
+            "//div[contains(@ng-click, 'filtrarInspecoesPorContador')]"
+        )))
+
+        div_aguardando_aceite.click()
 
         time.sleep(5)
         print("Parte 2 feita!")

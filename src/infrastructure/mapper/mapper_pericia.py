@@ -3,7 +3,7 @@ from src.infrastructure.entity.pericia_entity import PericiaEntity
 
 class PericiaMapper:
 
-    def paraEntity(self, pericia: Pericia) -> PericiaEntity:
+    def para_entity(self, pericia: Pericia) -> PericiaEntity:
         return PericiaEntity(
             id=pericia.id,  
             created_at=pericia.created_at,
@@ -31,7 +31,7 @@ class PericiaMapper:
             corretor=pericia.corretor
         )
 
-    def paraDomain(self, pericia_entity: PericiaEntity) -> Pericia:
+    def para_domain(self, pericia_entity: PericiaEntity) -> Pericia:
         return Pericia(
             id=pericia_entity.id,
             created_at=pericia_entity.created_at,

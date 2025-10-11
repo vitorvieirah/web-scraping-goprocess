@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from uuid import UUID
+
 
 @dataclass
 class Pericia:
-    id = str
+    id = UUID
     created_at = str
     data_empresa = str
     categoria = str
