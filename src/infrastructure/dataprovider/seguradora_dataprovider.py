@@ -38,4 +38,3 @@ class SeguradoraDataProvider:
             raise DataProviderException("Erro ao salvar usuário")
         finally:
             session.close()
-    
