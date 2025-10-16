@@ -26,7 +26,7 @@ class UsuarioDataProvider:
             return domain_obj
         except Exception as e:
             session.rollback()
-            logger.exception("Erro ao salvar usuário no banco de dados", e)
+            logger.exception(f"Erro ao salvar usuario no banco de dados: {e}")
             raise DataProviderException("Erro ao salvar usuário")
         finally:
             session.close()
@@ -40,7 +40,7 @@ class UsuarioDataProvider:
                 return self.usuario_mapper.para_domain(usuario_entity)
             return None
         except Exception as e:
-            logger.exception("Erro ao buscar usuário no banco de dados", e)
+            logger.exception(f"Erro ao buscar usuário no banco de dados: {e}")
             raise DataProviderException("Erro ao buscar usuário")
         finally:
             session.close()

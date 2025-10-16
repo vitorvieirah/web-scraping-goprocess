@@ -176,14 +176,18 @@ class WebScrapingDataProvider:
             # cobertura = str
 
 
-            #pericia = Pericia(atributos)
-            #pericia_lista.append(pericia)
+            pericia = Pericia(
+                seguradora=seguradora,
+                numero_proposta=numero_proposta,
+                numero_apolice=numero_apolice,
+                status=status,
+                cpf_cnpj=cpf_cnpj,
+                corretor=corretor,
+            )
+            pericia_lista.append(pericia)
 
             modal.find_element(By.CSS_SELECTOR, 'i[ng-click*="fecharModal"]').click()
 
-
-        time.sleep(2)
         print("Parte 2 feita!")
-
-        # return pericia_lista
+        return pericia_lista
 

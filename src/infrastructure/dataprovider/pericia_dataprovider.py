@@ -9,8 +9,8 @@ from src.domain.pericia import Pericia
 logger = logging.getLogger(__name__)
 
 class PericiaDataprovider:
-    def __init__(self, pericia_mapper: PericiaMapper):
-        self.pericia_mapper = pericia_mapper
+    def __init__(self):
+        self.pericia_mapper = PericiaMapper()
 
     def salvar(self, pericia: Pericia) -> Pericia:
         session = SessionLocal()
@@ -21,7 +21,7 @@ class PericiaDataprovider:
             return self.pericia_mapper.para_domain(pericia_entity=persisted_entity)
         except Exception as e:
             session.rollback()
-            logger.exception("Erro ao salvar pericia no banco de dados", e)
+            logger.exception(f"Erro ao salvar pericia no banco de dados: {e}")
             raise DataProviderException("Erro ao salvar pericia")
         finally:
             session.close()

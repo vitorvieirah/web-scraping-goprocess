@@ -1,13 +1,13 @@
-from tokenize import String
-
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.mysql import BINARY, TINYINT
+from sqlalchemy.dialects.postgresql import UUID
 from src.config.database import Base
+import uuid
 
 class PericiaEntity(Base):
     __tablename__ = 'pericias'
 
-    id = Column(BINARY(16), primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
     created_at = Column(String, nullable=True)
     data_empresa = Column(String, nullable=True)
     categoria = Column(String, nullable=True)

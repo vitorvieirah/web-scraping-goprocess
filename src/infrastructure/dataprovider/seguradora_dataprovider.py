@@ -34,7 +34,7 @@ class SeguradoraDataProvider:
             return seguradora_domain
         except Exception as e:
             session.rollback()
-            logger.exception("Erro ao salvar usuário no banco de dados", e)
+            logger.exception(f"Erro ao salvar usuario no banco de dados: {e}")
             raise DataProviderException("Erro ao salvar usuário")
         finally:
             session.close()

@@ -1,30 +1,34 @@
 from dataclasses import dataclass
-from uuid import UUID
+from typing import Optional
+import uuid
+
+
 
 
 @dataclass
 class Pericia:
-    id = UUID
-    created_at = str
-    data_empresa = str
-    categoria = str
-    tipo_vistoria = str
-    causa = str
-    numero_proposta = str
-    cultura = str
-    produtividade_esperada = str
-    seguradora = str
-    numero_apolice = str
-    segurado = str
-    cpf_cnpj = str
-    numero_contato = str
-    municipio = str
-    uf = str
-    area = str
-    nome_analista = str
-    numero_sinistro = str
-    data_captura = str
-    status = str
-    evento = str
-    cobertura = str
-    corretor = str
+
+    id: Optional[uuid.UUID] = None
+    created_at: Optional[str] = None
+    data_empresa: Optional[str] = None
+    categoria: Optional[str] = None
+    tipo_vistoria: Optional[str] = None
+    causa: Optional[str] = None
+    numero_proposta: Optional[str] = None
+    cultura: Optional[str] = None
+    produtividade_esperada: Optional[str] = None
+    seguradora: Optional[str] = None
+    numero_apolice: Optional[str] = None
+    segurado: Optional[str] = None
+    cpf_cnpj: Optional[str] = None
+    numero_contato: Optional[str] = None
+    municipio: Optional[str] = None
+    uf: Optional[str] = None
+    area: Optional[str] = None
+    nome_analista: Optional[str] = None
+    numero_sinistro: Optional[str] = None
+    data_captura: Optional[str] = None
+    status: Optional[str] = None
+    evento: Optional[str] = None
+    cobertura: Optional[str] = None
+    corretor: Optional[str] = None
