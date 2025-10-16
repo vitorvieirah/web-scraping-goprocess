@@ -3,7 +3,8 @@ from src.infrastructure.entity.usuario_entity import UsuarioEntity
 
 class UsuarioMapper:
 
-    def para_domain(self, usuario_entity: UsuarioEntity) -> Usuario:
+    @staticmethod
+    def para_domain(usuario_entity: UsuarioEntity) -> Usuario:
         return Usuario(
             id=usuario_entity.id_usuario,
             nome=usuario_entity.nome,
@@ -12,7 +13,8 @@ class UsuarioMapper:
             seguradora=usuario_entity.seguradora,
         )
 
-    def para_entity(self, usuario: Usuario) -> UsuarioEntity:
+    @staticmethod
+    def para_entity(usuario: Usuario) -> UsuarioEntity:
         return UsuarioEntity(
             id_usuario=usuario.id,
             nome=usuario.nome,

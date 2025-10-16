@@ -1,4 +1,3 @@
-
 from src.domain.seguradora import Seguradora
 from src.infrastructure.entity.seguradora_entity import SeguradoraEntity
 from src.infrastructure.mapper.mapper_usuario import UsuarioMapper
@@ -20,7 +19,7 @@ class SeguradoraMapper:
         # Mapeia usuários se houver
         if seguradora.usuarios:
             entity.usuarios = [
-                self.usuario_mapper.paraEntity(usuario) for usuario in seguradora.usuarios
+                self.usuario_mapper.para_entity(usuario) for usuario in seguradora.usuarios
             ]
 
         return entity
@@ -30,7 +29,7 @@ class SeguradoraMapper:
         usuarios_domain = []
         if entity.usuarios:
             usuarios_domain = [
-                self.usuario_mapper.paraDomain(usuario_entity)
+                self.usuario_mapper.para_domain(usuario_entity)
                 for usuario_entity in entity.usuarios
             ]
 

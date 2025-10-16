@@ -7,9 +7,6 @@ class MainService:
         self.dataprovider = WebScrapingDataProvider(headless=False)
 
     def coletar_dados(self):
-        print('Username', USERNAME)
-        print('Password', PASSWORD)
-
         self.dataprovider.login(login_url="https://inspectos.com/sistema/index.html#/home",
                                         username=USERNAME,
                                         password=PASSWORD)

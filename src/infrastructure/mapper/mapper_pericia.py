@@ -3,7 +3,8 @@ from src.infrastructure.entity.pericia_entity import PericiaEntity
 
 class PericiaMapper:
 
-    def para_entity(self, pericia: Pericia) -> PericiaEntity:
+    @staticmethod
+    def para_entity(pericia: Pericia) -> PericiaEntity:
         return PericiaEntity(
             id=pericia.id,  
             created_at=pericia.created_at,
@@ -31,7 +32,8 @@ class PericiaMapper:
             corretor=pericia.corretor
         )
 
-    def para_domain(self, pericia_entity: PericiaEntity) -> Pericia:
+    @staticmethod
+    def para_domain(pericia_entity: PericiaEntity) -> Pericia:
         return Pericia(
             id=pericia_entity.id,
             created_at=pericia_entity.created_at,
@@ -58,4 +60,3 @@ class PericiaMapper:
             cobertura=pericia_entity.cobertura,
             corretor=pericia_entity.corretor
         )
-

@@ -5,6 +5,4 @@ from uuid import UUID
 class Usuario:
     id: UUID
     nome: str
-    usuario: str
-    senha: str
     seguradora: str

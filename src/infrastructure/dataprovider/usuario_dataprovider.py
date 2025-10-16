@@ -1,5 +1,6 @@
 import logging
 from src.config.database import SessionLocal
+from src.domain.usuario import Usuario
 from src.infrastructure.entity.usuario_entity import UsuarioEntity
 from src.infrastructure.mapper.mapper_usuario import UsuarioMapper
 from src.infrastructure.exception.DataProviderException import DataProviderException
@@ -10,7 +11,7 @@ class UsuarioDataProvider:
     def __init__(self, usuario_mapper: UsuarioMapper):
         self.usuario_mapper = usuario_mapper
 
-    def salvar(self, usuario):
+    def salvar(self, usuario: Usuario):
         session = SessionLocal()
 
         usuario_entity = self.usuario_mapper.para_entity(usuario)

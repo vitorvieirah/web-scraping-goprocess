@@ -1,5 +1,6 @@
 import logging
 import time
+from operator import itemgetter
 from typing import Optional
 
 from selenium import webdriver
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class WebScrapingDataProvider:
 
-    def __init__(self, headless: Optional[bool] = False, timeout: int = 12):
+    def __init__(self, headless: Optional[bool] = True, timeout: int = 12):
         options = webdriver.ChromeOptions()
         if headless:
             options.add_argument("--headless=new")
@@ -30,6 +31,7 @@ class WebScrapingDataProvider:
         except WebDriverException:
             logger.exception("Erro ao iniciar WebDriver")
             raise
+
         self.wait = WebDriverWait(self.driver, timeout)
 
     def login(self, login_url: str, username: str, password: str):
@@ -82,6 +84,84 @@ class WebScrapingDataProvider:
             "span.insp360-checklist-switch.switch[name='exibeInspecoesConcluidas']"
         )))
         switch_button.click()
+
+        tabela_pericias = wait.until(
+            EC.visibility_of_element_located(
+                (By.CSS_SELECTOR, "table.insp360-grid-primeira-tabela")
+            )
+        )
+        tbody = tabela_pericias.find_element(By.TAG_NAME, "tbody")
+        item_lista = tbody.find_elements(By.TAG_NAME, "tr")
+
+        for item in item_lista:
+            item.find_element(By.TAG_NAME, "td").click()
+
+            modal = wait.until(EC.visibility_of_element_located(
+                    (By.CSS_SELECTOR, 'div[ng-show-360="exibeModal"]')
+            ))
+
+            wait.until(EC.visibility_of_element_located(
+                (By.TAG_NAME, 'ng-template-modal-inspecao')
+            ))
+
+            #  Tabela 1
+            seguradora = modal.find_elements(
+                By.CSS_SELECTOR,
+                'span[ng-if="campo == campoDinamicoResumo.seguradora"]')[1].text
+
+            numero_proposta = modal.find_elements(
+                By.CSS_SELECTOR,
+                'span[ng-if="campo == campoDinamicoResumo.numero_proposta"]')[1].text
+
+            numero_apolice = modal.find_elements(
+                By.CSS_SELECTOR,
+                'span[ng-if="campo == campoDinamicoResumo.numero_apolice"]')[1].text
+
+            #  Tabela 2
+
+
+            #  Tabela 3
+
+
+            #  Tabela 4
+            #cultura
+            #produtividade_esperada
+            #numero_sinistro
+
+
+            #  Tabela Area Segurada
+
+
+            #  Tabela Proponente
+            #cpf_cnpj
+
+
+            #  Tabela Corretor
+
+
+
+            # created_at = str
+            # data_empresa = str
+            # categoria = str
+            # tipo_vistoria = str
+            # causa = str
+            # segurado = str
+            # numero_contato = str
+            # municipio = str
+            # uf = str
+            # area = str
+            # nome_analista = str
+            # data_captura = str
+
+            # status TEM
+
+            # evento TEM
+
+            # cobertura = str
+
+            # corretor TEM
+
+            modal.find_element(By.CSS_SELECTOR, 'i[ng-click*="fecharModal"]').click()
 
         time.sleep(5)
         print("Parte 2 feita!")
