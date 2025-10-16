@@ -11,6 +11,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
+from src.domain.pericia import Pericia
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +52,8 @@ class WebScrapingDataProvider:
         print("Login enviado com sucesso!")
 
     def raspar(self):
+        pericia_lista = []
+
         wait = WebDriverWait(self.driver, 15)
 
         entrar_btn = wait.until(
@@ -121,23 +125,40 @@ class WebScrapingDataProvider:
 
 
             #  Tabela 3
+            status = modal.find_element(
+                By.CSS_SELECTOR,
+                'span.label.insp360-grid-inspecao-status.insp360-status-inspecao-64'
+            ).text
 
+            print(f"seguradora: {seguradora}, n proposta: {numero_proposta}, n apolice: {numero_apolice}, status: {status}")
 
             #  Tabela 4
             #cultura
             #produtividade_esperada
             #numero_sinistro
-
+            #evento
 
             #  Tabela Area Segurada
 
 
             #  Tabela Proponente
-            #cpf_cnpj
+            div_proponente = modal.find_element(
+                By.XPATH,
+                "//div[contains(@ng-repeat, 'proponente in modal.proponentes')]"
+            )
 
+            cpf_cnpj = div_proponente.find_element(
+                By.XPATH,
+                ".//span[normalize-space(text())='CPF/CNPJ']/ancestor::div[contains(@class,'row')]/div[contains(@class,'col-xs-52')]//span"
+            ).text
 
             #  Tabela Corretor
+            corretor = modal.find_elements(
+                By.CSS_SELECTOR,
+                'span[ng-show-360="modal.corretor.telefones.length == 0"]')[1].text
 
+            print(f"cpf_cnpj: {cpf_cnpj}, corretor: {corretor}")
+            # print(f"tam: {len(cpf_cnpj)}, corretor: {corretor}")
 
 
             # created_at = str
@@ -152,18 +173,17 @@ class WebScrapingDataProvider:
             # area = str
             # nome_analista = str
             # data_captura = str
-
-            # status TEM
-
-            # evento TEM
-
             # cobertura = str
 
-            # corretor TEM
+
+            #pericia = Pericia(atributos)
+            #pericia_lista.append(pericia)
 
             modal.find_element(By.CSS_SELECTOR, 'i[ng-click*="fecharModal"]').click()
 
-        time.sleep(5)
+
+        time.sleep(2)
         print("Parte 2 feita!")
 
+        # return pericia_lista
 
