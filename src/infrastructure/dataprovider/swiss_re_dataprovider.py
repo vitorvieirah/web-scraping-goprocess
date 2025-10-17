@@ -16,7 +16,7 @@ from src.domain.pericia import Pericia
 logger = logging.getLogger(__name__)
 
 
-class WebScrapingDataProvider:
+class SwissReDataProvider:
 
     def __init__(self, headless: Optional[bool] = True, timeout: int = 12):
         options = webdriver.ChromeOptions()
@@ -88,6 +88,9 @@ class WebScrapingDataProvider:
             "span.insp360-checklist-switch.switch[name='exibeInspecoesConcluidas']"
         )))
         switch_button.click()
+
+
+        # ========================================
 
         tabela_pericias = wait.until(
             EC.visibility_of_element_located(

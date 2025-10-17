@@ -4,21 +4,18 @@ from src.infrastructure.entity.usuario_entity import UsuarioEntity
 class UsuarioMapper:
 
     @staticmethod
-    def para_domain(usuario_entity: UsuarioEntity) -> Usuario:
+    def para_domain(entity: UsuarioEntity) -> Usuario:
         return Usuario(
-            id=usuario_entity.id_usuario,
-            nome=usuario_entity.nome,
-            usuario=usuario_entity.usuario,
-            senha=usuario_entity.senha,
-            seguradora=usuario_entity.seguradora,
+            id_usuario=entity.id_usuario,
+            nome=entity.nome,
+            seguradoras=[],
+            pericias=[]
         )
 
     @staticmethod
-    def para_entity(usuario: Usuario) -> UsuarioEntity:
-        return UsuarioEntity(
-            id_usuario=usuario.id,
-            nome=usuario.nome,
-            usuario=usuario.usuario,
-            senha=usuario.senha,
-            seguradora=usuario.seguradora,
+    def para_entity(domain: Usuario) -> UsuarioEntity:
+        entity = UsuarioEntity(
+            id_usuario=domain.id_usuario,
+            nome=domain.nome
         )
+        return entity

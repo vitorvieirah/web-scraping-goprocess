@@ -1,6 +1,11 @@
+import uuid
+
 from cryptography.fernet import Fernet
 from sqlalchemy.exc import SQLAlchemyError
 import logging
+
+from src.domain.usuario import Usuario
+from src.infrastructure.entity.seguradora_entity import SeguradoraEntity
 from src.infrastructure.exception.DataProviderException import DataProviderException
 
 from src.config.database import SessionLocal
@@ -34,7 +39,23 @@ class SeguradoraDataProvider:
             return seguradora_domain
         except Exception as e:
             session.rollback()
-            logger.exception(f"Erro ao salvar usuario no banco de dados: {e}")
-            raise DataProviderException("Erro ao salvar usuário")
+            logger.exception(f"Erro ao salvar seguradora no banco de dados: {e}")
+            raise DataProviderException("Erro ao salvar seguradora")
+        finally:
+            session.close()
+
+    def listar_por_usuario(self, id_usuario: uuid.UUID):
+        session = SessionLocal()
+        try:
+            seguradoras = (
+                session.query(SeguradoraEntity)
+                .filter(SeguradoraEntity.usuario_id == id_usuario)
+                .all()
+            )
+            return seguradoras
+        except Exception as e:
+            session.rollback()
+            logger.exception(f"Erro ao listar seguradoras pelo id do usuário: {e}")
+            raise DataProviderException("Erro ao listar seguradoras pelo id do usuário")
         finally:
             session.close()

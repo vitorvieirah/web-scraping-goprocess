@@ -1,4 +1,7 @@
 import logging
+
+from requests import session
+
 from src.config.database import SessionLocal
 from src.domain.usuario import Usuario
 from src.infrastructure.entity.usuario_entity import UsuarioEntity
@@ -42,5 +45,22 @@ class UsuarioDataProvider:
         except Exception as e:
             logger.exception(f"Erro ao buscar usuário no banco de dados: {e}")
             raise DataProviderException("Erro ao buscar usuário")
+        finally:
+            session.close()
+
+    def listar(self):
+        session = SessionLocal()
+
+        try:
+            usuarios_entity = session.query(UsuarioEntity).all()
+
+            usuarios_domain = []
+            for usuario in usuarios_entity:
+                usuarios_domain.append(self.usuario_mapper.para_domain(usuario))
+
+            return usuarios_domain
+        except Exception as e:
+            logger.exception(f"Erro ao listar usuários no banco de dados: {e}")
+            raise DataProviderException("Erro ao listar")
         finally:
             session.close()

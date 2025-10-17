@@ -1,8 +1,11 @@
-from sqlalchemy import Column, String
-from sqlalchemy.dialects.mysql import BINARY, TINYINT
-from sqlalchemy.dialects.postgresql import UUID
-from src.config.database import Base
 import uuid
+
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
+
+from src.config.database import Base
+
 
 class PericiaEntity(Base):
     __tablename__ = 'pericias'
@@ -16,7 +19,7 @@ class PericiaEntity(Base):
     numero_proposta = Column(String, nullable=True)
     cultura = Column(String, nullable=True)
     produtividade_esperada = Column(String, nullable=True)
-    seguradora = Column(String, nullable=True)
+    seguradora_scr = Column(String, nullable=True)
     numero_apolice = Column(String, nullable=True)
     segurado = Column(String, nullable=True)
     cpf_cnpj = Column(String, nullable=True)
@@ -31,3 +34,12 @@ class PericiaEntity(Base):
     evento = Column(String, nullable=True)
     cobertura = Column(String, nullable=True)
     corretor = Column(String, nullable=True)
+
+
+# 🔗 FK para Usuario e Seguradora
+    usuario_id = Column(UUID(as_uuid=True), ForeignKey("usuarios.id_usuario"), nullable=False)
+    seguradora_id = Column(UUID(as_uuid=True), ForeignKey("seguradoras.id_seguradora"), nullable=False)
+
+    # 🔗 Relacionamentos
+    usuario = relationship("UsuarioEntity", back_populates="pericias")
+    seguradora = relationship("SeguradoraEntity", back_populates="pericias")
