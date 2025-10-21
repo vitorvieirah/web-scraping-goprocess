@@ -1,6 +1,5 @@
 from src.domain.pericia import Pericia
 from src.infrastructure.dataprovider.pericia_dataprovider import PericiaDataprovider
-from src.service.webscraping_service import WebscrapingService
 
 
 class PericiaService:

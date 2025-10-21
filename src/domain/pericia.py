@@ -30,3 +30,4 @@ class Pericia:
     seguradora_id: Optional[int] = None
     usuario: Optional["Usuario"] = None
     seguradora_rel: Optional["Seguradora"] = None
+

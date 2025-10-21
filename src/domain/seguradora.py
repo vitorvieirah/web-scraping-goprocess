@@ -1,5 +1,4 @@
 from src.domain.identificador_seguradora import IdentificadorSeguradora
-from src.domain.usuario import Usuario
 from typing import List, Optional
 from uuid import UUID
 from dataclasses import dataclass

@@ -25,7 +25,7 @@ class SeguradoraDataProvider:
 
         seguradora_entity = self.seguradora_mapper.para_entity(seguradora)
 
-        seguradora_entity.usuario_credencial = self.cipher.encrypt(seguradora_entity.usuario_credencial.encode()).decode()
+        seguradora_entity.user_credencial = self.cipher.encrypt(seguradora_entity.user_credencial.encode()).decode()
         seguradora_entity.senha_credencial = self.cipher.encrypt(seguradora_entity.senha_credencial.encode()).decode()
 
         try:
@@ -33,7 +33,7 @@ class SeguradoraDataProvider:
             session.commit()
 
             seguradora_domain = self.seguradora_mapper.para_domain(persisted_entity)
-            seguradora_domain.usuario_credencial = self.cipher.decrypt(seguradora_domain.usuario_credencial.encode()).decode()
+            seguradora_domain.user_credencial = self.cipher.decrypt(seguradora_domain.user_credencial.encode()).decode()
             seguradora_domain.senha_credencial = self.cipher.decrypt(seguradora_domain.senha_credencial.encode()).decode()
 
             return seguradora_domain

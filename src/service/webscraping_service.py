@@ -1,9 +1,9 @@
+from src.domain.seguradora import Seguradora
 from src.domain.usuario import Usuario
 from src.infrastructure.dataprovider.swiss_re_dataprovider import SwissReDataProvider
 from src.service.pericia_service import PericiaService
 from src.service.seguradora_serivce import SeguradoraService
-from src.service.usuario_service import UsuarioService
-from src.domain.seguradora import Seguradora
+
 
 class WebscrapingService:
     def __init__(self, seguradora_service: SeguradoraService, swiss_re_data_provider: SwissReDataProvider, pericia_service: PericiaService):
