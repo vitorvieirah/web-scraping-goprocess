@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from src.config.database import Base
 
 class UsuarioEntity(Base):
-    tablename = 'usuarios'
+    __tablename__ = 'usuarios'
 
     id_usuario = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nome = Column(String, nullable=False)

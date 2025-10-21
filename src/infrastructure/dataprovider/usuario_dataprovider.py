@@ -1,30 +1,26 @@
 import logging
 
-from requests import session
-
-from src.config.database import SessionLocal
 from src.domain.usuario import Usuario
 from src.infrastructure.entity.usuario_entity import UsuarioEntity
 from src.infrastructure.mapper.mapper_usuario import UsuarioMapper
 from src.infrastructure.exception.DataProviderException import DataProviderException
+from src.config.database import SessionLocal
 
 logger = logging.getLogger(__name__)
 
 class UsuarioDataProvider:
-    def __init__(self, usuario_mapper: UsuarioMapper):
-        self.usuario_mapper = usuario_mapper
 
     def salvar(self, usuario: Usuario):
         session = SessionLocal()
 
-        usuario_entity = self.usuario_mapper.para_entity(usuario)
+        usuario_entity = UsuarioMapper.para_entity(usuario)
 
         try:
             persisted_entity = session.merge(usuario_entity)
             session.commit()
 
             # descriptografando para devolver
-            domain_obj = self.usuario_mapper.para_domain(persisted_entity)
+            domain_obj = UsuarioMapper.para_domain(persisted_entity)
 
             return domain_obj
         except Exception as e:
@@ -40,7 +36,7 @@ class UsuarioDataProvider:
         try:
             usuario_entity = session.query(UsuarioEntity).filter_by(id=usuario_id).first()
             if usuario_entity:
-                return self.usuario_mapper.para_domain(usuario_entity)
+                return UsuarioMapper.para_domain(usuario_entity)
             return None
         except Exception as e:
             logger.exception(f"Erro ao buscar usuário no banco de dados: {e}")
@@ -56,7 +52,7 @@ class UsuarioDataProvider:
 
             usuarios_domain = []
             for usuario in usuarios_entity:
-                usuarios_domain.append(self.usuario_mapper.para_domain(usuario))
+                usuarios_domain.append(UsuarioMapper.para_domain(usuario))
 
             return usuarios_domain
         except Exception as e:

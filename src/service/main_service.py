@@ -3,6 +3,7 @@ import uuid
 from src.config.database import Base, engine, SessionLocal
 from src.infrastructure.dataprovider.swiss_re_dataprovider import SwissReDataProvider
 from src.infrastructure.dataprovider.usuario_dataprovider import UsuarioDataProvider
+from src.infrastructure.mapper.mapper_usuario import UsuarioMapper
 from src.service.pericia_service import PericiaService
 from src.service.usuario_service import UsuarioService
 from src.service.webscraping_service import WebscrapingService
@@ -36,8 +37,8 @@ class MainService:
 if __name__ == "__main__":
     db = SessionLocal()
 
-    usuario_data_provider = UsuarioDataProvider(db)
-    swiss_re_data_provider = SwissReDataProvider()
+    usuario_data_provider = UsuarioDataProvider()
+    swiss_re_data_provider = SwissReDataProvider(headless=False)
 
     # Cria os services
     usuario_service = UsuarioService(usuario_data_provider)
