@@ -1,6 +1,7 @@
 import uuid
 
 from cryptography.fernet import Fernet
+from sqlalchemy import Integer
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 
@@ -44,7 +45,7 @@ class SeguradoraDataProvider:
         finally:
             session.close()
 
-    def listar_por_usuario(self, id_usuario: uuid.UUID):
+    def listar_por_usuario(self, id_usuario):
         session = SessionLocal()
         try:
             seguradoras = (
@@ -52,7 +53,15 @@ class SeguradoraDataProvider:
                 .filter(SeguradoraEntity.usuario_id == id_usuario)
                 .all()
             )
-            return seguradoras
+            seguradoras_domain = []
+
+            for seguradora in seguradoras:
+                seguradora_domain = self.seguradora_mapper.para_domain(seguradora)
+                seguradora_domain.user_credencial = self.cipher.decrypt(seguradora_domain.user_credencial.encode()).decode()
+                seguradora_domain.senha_credencial = self.cipher.decrypt(seguradora_domain.senha_credencial.encode()).decode()
+                seguradoras_domain.append(seguradora_domain)
+
+            return seguradoras_domain
         except Exception as e:
             session.rollback()
             logger.exception(f"Erro ao listar seguradoras pelo id do usuário: {e}")

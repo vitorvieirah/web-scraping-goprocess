@@ -14,7 +14,7 @@ class PericiaMapper:
         return Pericia(
             id=entity.id,
             created_at=entity.created_at,
-            seguradora=entity.seguradora,
+            seguradora_nome=entity.seguradora_nome,
             numero_proposta=entity.numero_proposta,
             numero_apolice=entity.numero_apolice,
             area_segurada_total=entity.area_segurada_total,
@@ -32,7 +32,7 @@ class PericiaMapper:
             nome_corretor=entity.nome_corretor,
             usuario_id=entity.usuario_id,
             seguradora_id=entity.seguradora_id,
-            usuario=usuario_domain,
+            usuario_rel=usuario_domain,
             seguradora_rel=seguradora_domain
         )
 
@@ -41,7 +41,7 @@ class PericiaMapper:
         return PericiaEntity(
             id=domain.id,
             created_at=domain.created_at,
-            seguradora=domain.seguradora,
+            seguradora_nome=domain.seguradora_nome,
             numero_proposta=domain.numero_proposta,
             numero_apolice=domain.numero_apolice,
             area_segurada_total=domain.area_segurada_total,

@@ -1,9 +1,7 @@
-import uuid
-
 from src.config.database import Base, engine, SessionLocal
 from src.infrastructure.dataprovider.swiss_re_dataprovider import SwissReDataProvider
 from src.infrastructure.dataprovider.usuario_dataprovider import UsuarioDataProvider
-from src.infrastructure.mapper.mapper_usuario import UsuarioMapper
+from src.infrastructure.dataprovider.pericia_dataprovider import PericiaDataprovider
 from src.service.pericia_service import PericiaService
 from src.service.usuario_service import UsuarioService
 from src.service.webscraping_service import WebscrapingService
@@ -30,27 +28,27 @@ class MainService:
         self.seguradora_service.cadastrar()
 
     def listar_seguradoras(self):
-        id_usuario = input("Informe o ID do usuário: ")
-        self.seguradora_service.listar_por_usuario(uuid.UUID(id_usuario))
+        id_usuario = int(input("Informe o ID do usuário: "))
+        seguradoras_lista = self.seguradora_service.listar_por_usuario(id_usuario)
+        print(f"seguradoras: {seguradoras_lista}")
 
 
 if __name__ == "__main__":
     db = SessionLocal()
 
+    mapper = SeguradoraMapper()
+
     usuario_data_provider = UsuarioDataProvider()
+    pericia_data_provider = PericiaDataprovider()
+    seguradora_data_provider = SeguradoraDataProvider(mapper, FERNET_KEY)
     swiss_re_data_provider = SwissReDataProvider(headless=False)
 
     # Cria os services
     usuario_service = UsuarioService(usuario_data_provider)
-    seguradora_service = SeguradoraService(db)
-    pericia_service = PericiaService(db)
-
-    mapper = SeguradoraMapper()
-    data_provider = SeguradoraDataProvider(mapper, FERNET_KEY)
-    seguradora_service = SeguradoraService(data_provider)
+    pericia_service = PericiaService(pericia_data_provider)
+    seguradora_service = SeguradoraService(seguradora_data_provider)
 
     # você precisa inicializar esses outros também
-    usuario_service = UsuarioService(usuario_data_provider)
     webscraping_service = WebscrapingService(seguradora_service, swiss_re_data_provider, pericia_service)
 
     service = MainService(usuario_service, webscraping_service, seguradora_service)

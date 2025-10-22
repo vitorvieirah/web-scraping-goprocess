@@ -18,12 +18,15 @@ class WebscrapingService:
             self.processar_scraping(seguradora)
 
     def processar_scraping(self, seguradora: Seguradora):
-        match seguradora.identificador:
+        print(seguradora)
+        match seguradora.identificador.value:
             case 'SWISS_RE':
-                self.swiss_re_data_provider.login(seguradora.url_site, seguradora.senha_credencial, seguradora.user_credencial)
+                self.swiss_re_data_provider.login(login_url=seguradora.url_site, password=seguradora.senha_credencial, username=seguradora.user_credencial)
                 dados = self.swiss_re_data_provider.raspar()
 
                 for pericia in dados:
+                    pericia.usuario_id = seguradora.usuario_id
+                    pericia.seguradora_id = seguradora.id_seguradora
                     self.pericia_service.salvar(pericia=pericia)
 
 

@@ -10,7 +10,7 @@ from src.domain.usuario import Usuario
 class Pericia:
     id: Optional[int] = None
     created_at: Optional[datetime] = None
-    seguradora: Optional[str] = None
+    seguradora_nome: Optional[str] = None
     numero_proposta: Optional[str] = None
     numero_apolice: Optional[str] = None
     area_segurada_total: Optional[str] = None
@@ -28,6 +28,6 @@ class Pericia:
     nome_corretor: Optional[str] = None
     usuario_id: Optional[int] = None
     seguradora_id: Optional[int] = None
-    usuario: Optional["Usuario"] = None
+    usuario_rel: Optional["Usuario"] = None
     seguradora_rel: Optional["Seguradora"] = None
 

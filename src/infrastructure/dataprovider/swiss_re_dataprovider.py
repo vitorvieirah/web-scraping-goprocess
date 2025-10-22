@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class SwissReDataProvider:
 
-    def __init__(self, headless: Optional[bool] = True, timeout: int = 12):
+    def __init__(self, headless: Optional[bool] = False, timeout: int = 12):
         options = webdriver.ChromeOptions()
         if headless:
             options.add_argument("--headless=new")
@@ -56,13 +56,21 @@ class SwissReDataProvider:
 
         wait = WebDriverWait(self.driver, 15)
 
+        seguradora_btn = wait.until(
+            EC.presence_of_all_elements_located((
+                By.XPATH,
+                "//div[contains(@class, 'insp360-mouse-link') and contains(@class, 'clients')]"
+            ))
+        )[1]
+        seguradora_btn.click()
+
         entrar_btn = wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "(//div[contains(@class,'row')]/div[contains(@class,'col-3')])[2]//div[text()='ENTRAR']")
             )
         )
-
         entrar_btn.click()
+
 
         # Código produção
 
@@ -104,7 +112,7 @@ class SwissReDataProvider:
             item.find_element(By.TAG_NAME, "td").click()
 
             modal = wait.until(EC.visibility_of_element_located(
-                    (By.CSS_SELECTOR, 'div[ng-show-360="exibeModal"]')
+                (By.CSS_SELECTOR, 'div[ng-show-360="exibeModal"]')
             ))
 
             wait.until(EC.visibility_of_element_located(
@@ -112,7 +120,7 @@ class SwissReDataProvider:
             ))
 
             #  Tabela 1
-            seguradora = modal.find_elements(
+            seguradora_nome = modal.find_elements(
                 By.CSS_SELECTOR,
                 'span[ng-if="campo == campoDinamicoResumo.seguradora"]')[1].text
 
@@ -124,25 +132,30 @@ class SwissReDataProvider:
                 By.CSS_SELECTOR,
                 'span[ng-if="campo == campoDinamicoResumo.numero_apolice"]')[1].text
 
-            #  Tabela 2
-
-
-            #  Tabela 3
-            status = modal.find_element(
-                By.CSS_SELECTOR,
-                'span.label.insp360-grid-inspecao-status.insp360-status-inspecao-64'
-            ).text
-
-            print(f"seguradora: {seguradora}, n proposta: {numero_proposta}, n apolice: {numero_apolice}, status: {status}")
-
             #  Tabela 4
-            #cultura
-            #produtividade_esperada
-            #numero_sinistro
-            #evento
+            spans = wait.until(
+                EC.presence_of_all_elements_located((
+                    By.XPATH, "//span[@class='insp360-exibe-textarea ng-binding']"
+                ))
+            )
 
-            #  Tabela Area Segurada
+            area_segurada_total = spans[1].text
 
+            numero_sinistro = spans[4].text
+
+            data_aviso_sinistro = spans[6].text
+
+            data_ocorrencia = spans[7].text
+
+            evento = spans[8].text
+
+            cultura = spans[9].text
+
+            produtividade_estimada = spans[10].text
+
+            numero_aviso = spans[11].text
+
+            cobertura_sinistrada = spans[12].text
 
             #  Tabela Proponente
             div_proponente = modal.find_element(
@@ -150,47 +163,53 @@ class SwissReDataProvider:
                 "//div[contains(@ng-repeat, 'proponente in modal.proponentes')]"
             )
 
-            cpf_cnpj = div_proponente.find_element(
+            linha_nome_telefone = div_proponente.find_element(
+                By.CSS_SELECTOR,
+                'div.row'
+            )
+
+            nome_proponente = linha_nome_telefone.find_elements(
+                By.TAG_NAME,
+                'div'
+            )[1].text
+
+            telefone_proponente = linha_nome_telefone.find_elements(
+                By.TAG_NAME,
+                'div'
+            )[3].text
+            cpf_cnpj_proponente = div_proponente.find_element(
                 By.XPATH,
                 ".//span[normalize-space(text())='CPF/CNPJ']/ancestor::div[contains(@class,'row')]/div[contains(@class,'col-xs-52')]//span"
             ).text
 
             #  Tabela Corretor
-            corretor = modal.find_elements(
+            nome_corretor = modal.find_elements(
                 By.CSS_SELECTOR,
                 'span[ng-show-360="modal.corretor.telefones.length == 0"]')[1].text
 
-            print(f"cpf_cnpj: {cpf_cnpj}, corretor: {corretor}")
-            # print(f"tam: {len(cpf_cnpj)}, corretor: {corretor}")
-
-
-            # created_at = str
-            # data_empresa = str
-            # categoria = str
-            # tipo_vistoria = str
-            # causa = str
-            # segurado = str
-            # numero_contato = str
-            # municipio = str
-            # uf = str
-            # area = str
-            # nome_analista = str
-            # data_captura = str
-            # cobertura = str
-
+            # nome_corretor = Column(String, nullable=False)
 
             pericia = Pericia(
-                seguradora=seguradora,
+                seguradora_nome=seguradora_nome,
                 numero_proposta=numero_proposta,
                 numero_apolice=numero_apolice,
-                status=status,
-                cpf_cnpj=cpf_cnpj,
-                corretor=corretor,
+                area_segurada_total=area_segurada_total,
+                numero_sinistro=numero_sinistro,
+                data_aviso_sinistro=data_aviso_sinistro,
+                data_ocorrencia=data_ocorrencia,
+                evento=evento,
+                cultura=cultura,
+                produtividade_estimada=produtividade_estimada,
+                numero_aviso=numero_aviso,
+                cobertura_sinistrada=cobertura_sinistrada,
+                nome_proponente=nome_proponente,
+                telefone_proponente=telefone_proponente,
+                cpf_cnpj_proponente=cpf_cnpj_proponente,
+                nome_corretor=nome_corretor,
             )
             pericia_lista.append(pericia)
 
             modal.find_element(By.CSS_SELECTOR, 'i[ng-click*="fecharModal"]').click()
 
-        print("Parte 2 feita!")
+        print(f"Parte 2 feita! Lista: {pericia_lista}")
         return pericia_lista
-
