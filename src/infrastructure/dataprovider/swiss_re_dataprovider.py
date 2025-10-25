@@ -74,28 +74,28 @@ class SwissReDataProvider:
 
         # Código produção
 
-        # div_aguardando_aceite = wait.until(EC.element_to_be_clickable((
-        #     By.XPATH,
-        #     "//div[contains(@class, 'panel-heading')]"
-        #     "[.//span[contains(text(), 'Aguardando Aceite')]]"
-        #     "/following-sibling::div[contains(@class, 'panel-body')]"
-        #     "//div[contains(@ng-click, 'filtrarInspecoesPorContador')]"
-        # )))
-        #
-        # div_aguardando_aceite.click()
+        div_aguardando_aceite = wait.until(EC.element_to_be_clickable((
+            By.XPATH,
+            "//div[contains(@class, 'panel-heading')]"
+            "[.//span[contains(text(), 'Aguardando Aceite')]]"
+            "/following-sibling::div[contains(@class, 'panel-body')]"
+            "//div[contains(@ng-click, 'filtrarInspecoesPorContador')]"
+        )))
+
+        div_aguardando_aceite.click()
 
         # Codigo desenvolvimento
 
-        aba_grid = wait.until(EC.element_to_be_clickable(
-            (By.XPATH, "//ul[contains(@class, 'nav-tabs')]//span[contains(text(), 'GRID DE INSPEÇÃO')]")
-        ))
-        aba_grid.click()
-
-        switch_button = wait.until(EC.element_to_be_clickable((
-            By.CSS_SELECTOR,
-            "span.insp360-checklist-switch.switch[name='exibeInspecoesConcluidas']"
-        )))
-        switch_button.click()
+        # aba_grid = wait.until(EC.element_to_be_clickable(
+        #     (By.XPATH, "//ul[contains(@class, 'nav-tabs')]//span[contains(text(), 'GRID DE INSPEÇÃO')]")
+        # ))
+        # aba_grid.click()
+        #
+        # switch_button = wait.until(EC.element_to_be_clickable((
+        #     By.CSS_SELECTOR,
+        #     "span.insp360-checklist-switch.switch[name='exibeInspecoesConcluidas']"
+        # )))
+        # switch_button.click()
 
 
         # ========================================
@@ -213,3 +213,9 @@ class SwissReDataProvider:
 
         print(f"Parte 2 feita! Lista: {pericia_lista}")
         return pericia_lista
+
+    def close(self):
+        try:
+            self.driver.quit()
+        except Exception:
+            pass

@@ -12,17 +12,52 @@ from src.config.settings import FERNET_KEY
 
 Base.metadata.create_all(engine)
 
+
 class MainService:
-    def __init__(self, usuario_service: UsuarioService, webscraping_service: WebscrapingService,
-                 seguradora_service: SeguradoraService):
+    def __init__(self, usuario_service: UsuarioService, seguradora_service: SeguradoraService,
+                 pericia_service: PericiaService):
         self.usuario_service = usuario_service
-        self.webscraping_service = webscraping_service
         self.seguradora_service = seguradora_service
+        self.pericia_service = pericia_service
 
     def coletar_dados(self):
         usuarios = self.usuario_service.listar_usuarios()
-        for usuario in usuarios:
-            self.webscraping_service.processar(usuario)
+
+        for index, usuario in enumerate(usuarios, start=1):
+            print(f"\n=== Iniciando coleta para usuário {index}: {usuario.nome} ===")
+
+            seguradoras_usuario = self.seguradora_service.listar_por_usuario(usuario.id_usuario)
+
+            for seg_index, seguradora in enumerate(seguradoras_usuario, start=1):
+                print(f"\n--- Processando seguradora {seg_index}: {seguradora.nome} ---")
+
+                # 🔹 Novo navegador para cada seguradora
+                swiss_re_data_provider = SwissReDataProvider(headless=False)
+
+                try:
+                    webscraping_service = WebscrapingService(
+                        seguradora_service=self.seguradora_service,
+                        swiss_re_data_provider=swiss_re_data_provider,
+                        pericia_service=self.pericia_service
+                    )
+
+                    # 🔹 Agora processa apenas essa seguradora
+                    webscraping_service.processar_scraping(seguradora)
+
+                except Exception as e:
+                    print(f"❌ Erro ao processar seguradora {seguradora.nome}: {e}")
+
+                finally:
+                    # Fecha o navegador com segurança
+                    try:
+                        swiss_re_data_provider.close()
+                    except Exception:
+                        pass
+                    try:
+                        swiss_re_data_provider.driver.quit()
+                        print(f"✅ Navegador fechado para seguradora {seguradora.nome}.")
+                    except Exception:
+                        print(f"⚠️ Falha ao fechar o navegador da seguradora {seguradora.nome}.")
 
     def cadastrar_seguradora(self):
         self.seguradora_service.cadastrar()
@@ -30,37 +65,22 @@ class MainService:
     def listar_seguradoras(self):
         id_usuario = int(input("Informe o ID do usuário: "))
         seguradoras_lista = self.seguradora_service.listar_por_usuario(id_usuario)
-        print(f"seguradoras: {seguradoras_lista}")
+        print(f"Seguradoras: {seguradoras_lista}")
 
 
 if __name__ == "__main__":
     db = SessionLocal()
-
     mapper = SeguradoraMapper()
 
     usuario_data_provider = UsuarioDataProvider()
     pericia_data_provider = PericiaDataprovider()
     seguradora_data_provider = SeguradoraDataProvider(mapper, FERNET_KEY)
-    swiss_re_data_provider = SwissReDataProvider(headless=False)
 
-    # Cria os services
     usuario_service = UsuarioService(usuario_data_provider)
     pericia_service = PericiaService(pericia_data_provider)
     seguradora_service = SeguradoraService(seguradora_data_provider)
 
-    # você precisa inicializar esses outros também
-    webscraping_service = WebscrapingService(seguradora_service, swiss_re_data_provider, pericia_service)
-
-    service = MainService(usuario_service, webscraping_service, seguradora_service)
-
-
-
-    # Injeta dependências no WebscrapingService
-    webscraping_service = WebscrapingService(
-        seguradora_service=seguradora_service,
-        swiss_re_data_provider=swiss_re_data_provider,
-        pericia_service=pericia_service
-    )
+    service = MainService(usuario_service, seguradora_service, pericia_service)
 
     print("\n=== MENU ===")
     print("1. Cadastrar Seguradora")
