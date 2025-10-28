@@ -9,13 +9,14 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     libglib2.0-0 \
     libnss3 \
-    libgconf-2-4 \
+    libgconf-2-4 || true \
     libfontconfig1 \
     libxss1 \
     libappindicator3-1 \
     libasound2 \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
+
 
 # 3. Instala o Google Chrome
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
