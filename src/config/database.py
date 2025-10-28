@@ -13,8 +13,6 @@ def force_ipv4_connect(*args, **kwargs):
         kwargs["host"] = ipv4_addr
     return psycopg2.connect(*args, **kwargs)
 
-DATABASE_URL = "postgresql+psycopg2://<user>:<password>@db.kuueonnlotjmravgavbb.supabase.co:5432/postgres"
-
 engine = create_engine(
     DATABASE_URL,
     connect_args={"connect_factory": force_ipv4_connect},
