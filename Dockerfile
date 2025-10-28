@@ -42,4 +42,4 @@ ENV PYTHONUNBUFFERED=1
 ENV PATH="/usr/local/bin:$PATH"
 
 # 9. Comando padrão
-CMD ["python", "main.py"]
+CMD ["python", "-m", "src.service.main_service"]
