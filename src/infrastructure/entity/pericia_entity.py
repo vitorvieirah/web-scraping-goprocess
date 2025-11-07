@@ -11,7 +11,7 @@ class PericiaEntity(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     created_at = Column(DateTime, nullable=False, default=func.now())
     seguradora_nome = Column(String, nullable=False)
-    numero_proposta = Column(String, nullable=False)
+    numero_proposta = Column(String, nullable=False, unique=True)
     numero_apolice = Column(String, nullable=False)
     area_segurada_total = Column(String, nullable=False)
     numero_sinistro = Column(String, nullable=False)
