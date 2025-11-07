@@ -32,7 +32,7 @@ class MainService:
                 print(f"\n--- Processando seguradora {seg_index}: {seguradora.nome} ---")
 
                 # 🔹 Novo navegador para cada seguradora
-                swiss_re_data_provider = SwissReDataProvider(headless=True)
+                swiss_re_data_provider = SwissReDataProvider(headless=False)
 
                 try:
                     webscraping_service = WebscrapingService(
