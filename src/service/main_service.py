@@ -9,6 +9,7 @@ from src.service.seguradora_serivce import SeguradoraService
 from src.infrastructure.mapper.mapper_seguradora import SeguradoraMapper
 from src.infrastructure.dataprovider.seguradora_dataprovider import SeguradoraDataProvider
 from src.config.settings import FERNET_KEY
+import traceback
 
 Base.metadata.create_all(engine)
 
@@ -44,8 +45,12 @@ class MainService:
                     # 🔹 Agora processa apenas essa seguradora
                     webscraping_service.processar_scraping(seguradora)
 
+
                 except Exception as e:
+
                     print(f"❌ Erro ao processar seguradora {seguradora.nome}: {e}")
+
+                    traceback.print_exc()
 
                 finally:
                     # Fecha o navegador com segurança
