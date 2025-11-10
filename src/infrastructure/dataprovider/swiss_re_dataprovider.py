@@ -1,40 +1,18 @@
 import logging
 import time
-from typing import Optional
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException, TimeoutException, NoSuchElementException
-from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
 from src.domain.pericia import Pericia
 
 logger = logging.getLogger(__name__)
 
 
 class SwissReDataProvider:
-    def __init__(self, headless: Optional[bool] = False, timeout: int = 12):
-        options = webdriver.ChromeOptions()
-        if headless:
-            options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--window-size=1920,1080")
-        options.add_argument("--disable-extensions")
-        options.add_argument("--remote-debugging-port=9222")
-
-        service = Service(ChromeDriverManager().install())
-        try:
-            # 🧠 webdriver_manager baixa o driver compatível automaticamente
-            service = Service(ChromeDriverManager().install())
-            self.driver = webdriver.Chrome(service=service, options=options)
-        except WebDriverException:
-            logger.exception("Erro ao iniciar WebDriver")
-            raise
-
-        self.wait = WebDriverWait(self.driver, timeout)
+    def __init__(self, driver,):
+        self.driver = driver
+        self.wait = WebDriverWait(self.driver, 12)
 
     # ====================== LOGIN ======================
     def login(self, login_url: str, username: str, password: str):
@@ -290,11 +268,3 @@ class SwissReDataProvider:
 
         print(f"\n🧾 Total de perícias coletadas: {len(pericia_lista)}")
         return pericia_lista
-
-    # ====================== FECHAR ======================
-    def close(self):
-        try:
-            self.driver.quit()
-            print("🧹 Navegador fechado.")
-        except Exception:
-            pass
