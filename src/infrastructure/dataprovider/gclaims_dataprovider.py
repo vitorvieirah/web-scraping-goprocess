@@ -13,13 +13,16 @@ class GclaimsDataProvider:
     # ====================== LOGIN ======================
     def login(self, login_url: str, username: str, password: str):
         self.driver.get(login_url)
-        email_input = self.wait.until(EC.presence_of_element_located((By.NAME, "email")))
+        email_input = self.wait.until(EC.presence_of_element_located((By.ID, "txtNomeUsuario")))
         email_input.clear()
         email_input.send_keys(username)
 
-        password_input = self.driver.find_element(By.NAME, "senha")
+        password_input = self.driver.find_element(By.ID, "txtPassword")
         password_input.clear()
         password_input.send_keys(password)
 
-        self.driver.find_element(By.ID, "enter").click()
+        self.driver.find_element(By.ID, "btn_login").click()
         print("✅ Login enviado com sucesso!")
+
+    # ====================== RASPAGEM ======================
+    def raspar(self):

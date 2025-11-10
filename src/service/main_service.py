@@ -35,7 +35,7 @@ class MainService:
                 print(f"\n--- Processando seguradora {seg_index}: {seguradora.nome} ---")
 
                 # 🔹 Novo navegador para cada seguradora
-                browser = BrowserManager(headless=True)
+                browser = BrowserManager(headless=False)
                 driver = browser.get_driver()
 
                 try:
