@@ -19,10 +19,26 @@ class SeguradoraService:
         nome = input("Nome da seguradora: ")
         usuario_credencial = input("Usuário: ")
         senha_credencial = input("Senha: ")
-        usuario_id = input("ID do usuário: ")
+        usuario_id = int(input("ID do usuário: "))
         url_site = input("URL do site: ")
 
-        print(usuario_id)
+        # Mostra as opções de identificadores disponíveis
+        print("\nSelecione o identificador da seguradora:")
+        identificadores = list(IdentificadorSeguradora)
+        for i, identificador in enumerate(identificadores, start=1):
+            print(f"{i}. {identificador.value}")
+
+        # Captura a escolha do usuário
+        while True:
+            try:
+                escolha = int(input("Escolha (número): "))
+                if 1 <= escolha <= len(identificadores):
+                    identificador_escolhido = identificadores[escolha - 1]
+                    break
+                else:
+                    print("❌ Opção inválida. Tente novamente.")
+            except ValueError:
+                print("❌ Digite um número válido.")
 
         seguradora = Seguradora(
             id_seguradora=None,
@@ -30,7 +46,7 @@ class SeguradoraService:
             user_credencial=usuario_credencial,
             senha_credencial=senha_credencial,
             usuario_id=usuario_id,
-            identificador=IdentificadorSeguradora.SWISS_RE,
+            identificador=identificador_escolhido,
             url_site=url_site,
         )
 

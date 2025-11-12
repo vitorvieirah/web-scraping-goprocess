@@ -1,4 +1,6 @@
 from src.config.database import Base, engine, SessionLocal
+from src.infrastructure.browser.browser_manager import BrowserManager
+from src.infrastructure.dataprovider.gclaims_dataprovider import GclaimsDataProvider
 from src.infrastructure.dataprovider.swiss_re_dataprovider import SwissReDataProvider
 from src.infrastructure.dataprovider.usuario_dataprovider import UsuarioDataProvider
 from src.infrastructure.dataprovider.pericia_dataprovider import PericiaDataprovider
@@ -33,13 +35,17 @@ class MainService:
                 print(f"\n--- Processando seguradora {seg_index}: {seguradora.nome} ---")
 
                 # 🔹 Novo navegador para cada seguradora
-                swiss_re_data_provider = SwissReDataProvider(headless=True)
+                browser = BrowserManager(headless=False)
+                driver = browser.get_driver()
 
                 try:
+                    swiss_re_data_provider = SwissReDataProvider(driver)
+                    gclaims_data_provider = GclaimsDataProvider(driver)
+
                     webscraping_service = WebscrapingService(
-                        seguradora_service=self.seguradora_service,
+                        pericia_service=self.pericia_service,
                         swiss_re_data_provider=swiss_re_data_provider,
-                        pericia_service=self.pericia_service
+                        gclaims_data_provider=gclaims_data_provider,
                     )
 
                     # 🔹 Agora processa apenas essa seguradora
@@ -55,11 +61,11 @@ class MainService:
                 finally:
                     # Fecha o navegador com segurança
                     try:
-                        swiss_re_data_provider.close()
+                        browser.close()
                     except Exception:
                         pass
                     try:
-                        swiss_re_data_provider.driver.quit()
+                        browser.driver.quit()
                         print(f"✅ Navegador fechado para seguradora {seguradora.nome}.")
                     except Exception:
                         print(f"⚠️ Falha ao fechar o navegador da seguradora {seguradora.nome}.")

@@ -30,6 +30,9 @@ class PericiaMapper:
             telefone_proponente=entity.telefone_proponente,
             cpf_cnpj_proponente=entity.cpf_cnpj_proponente,
             nome_corretor=entity.nome_corretor,
+            municipio=entity.municipio,
+            uf=entity.uf,
+            identificador_unico=entity.identificador_unico,
             usuario_id=entity.usuario_id,
             seguradora_id=entity.seguradora_id,
             usuario_rel=usuario_domain,
@@ -57,6 +60,9 @@ class PericiaMapper:
             telefone_proponente=domain.telefone_proponente,
             cpf_cnpj_proponente=domain.cpf_cnpj_proponente,
             nome_corretor=domain.nome_corretor,
+            municipio=domain.municipio,
+            uf=domain.uf,
+            identificador_unico=domain.identificador_unico,
             usuario_id=domain.usuario_id,
             seguradora_id=domain.seguradora_id
         )
