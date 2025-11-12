@@ -40,11 +40,14 @@ class WebscrapingService:
                     username=seguradora.user_credencial
                 )
 
+                self.gclaims_data_provider.raspar()
+
                 dados = self.gclaims_data_provider.raspar()
 
                 for pericia in dados:
-
-                print("deu")
+                    pericia.usuario_id = seguradora.usuario_id
+                    pericia.seguradora_id = seguradora.id_seguradora
+                    self.pericia_service.salvar(pericia=pericia)
 
         print(f"✅ Finalizado scraping da seguradora: {seguradora.nome}")
 
