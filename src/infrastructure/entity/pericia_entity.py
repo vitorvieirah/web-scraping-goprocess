@@ -26,6 +26,9 @@ class PericiaEntity(Base):
     telefone_proponente = Column(String, nullable=False)
     cpf_cnpj_proponente = Column(String, nullable=False)
     nome_corretor = Column(String, nullable=False)
+    municipio = Column(String, nullable=False)
+    uf = Column(String, nullable=False)
+    identificador_unico = Column(String, nullable=False, unique=True)
 
     #🔗 FK para Usuario e Seguradora
     usuario_id = Column(Integer, ForeignKey("usuarios.id_usuario"), nullable=False)

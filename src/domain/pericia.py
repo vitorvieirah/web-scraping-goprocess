@@ -26,6 +26,9 @@ class Pericia:
     telefone_proponente: Optional[str] = None
     cpf_cnpj_proponente: Optional[str] = None
     nome_corretor: Optional[str] = None
+    municipio: Optional[str] = None
+    uf: Optional[str] = None
+    identificador_unico: Optional[str] = None
     usuario_id: Optional[int] = None
     seguradora_id: Optional[int] = None
     usuario_rel: Optional["Usuario"] = None
