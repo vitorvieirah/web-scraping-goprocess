@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class SwissReDataProvider:
-    def __init__(self, driver,):
+    def __init__(self, driver, ):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 12)
 
@@ -49,15 +49,15 @@ class SwissReDataProvider:
         )
         entrar_btn.click()
 
-        # === Seleciona aba "Aguardando Aceite" ===
-        div_aguardando_aceite = wait.until(EC.element_to_be_clickable((
+        # === Seleciona aba "Sem Agendamento" ===
+        div_sem_agendamento = wait.until(EC.element_to_be_clickable((
             By.XPATH,
             "//div[contains(@class, 'panel-heading')]"
-            "[.//span[contains(text(), 'Aguardando Aceite')]]"
+            "[.//span[contains(text(), 'Sem Agendamento')]]"
             "/following-sibling::div[contains(@class, 'panel-body')]"
-            "//div[contains(@ng-click, 'filtrarInspecoesPorContador')]"
+            "//div[contains(@ng-click, 'filtrarInspecoesSemAgendamento')]"
         )))
-        div_aguardando_aceite.click()
+        div_sem_agendamento.click()
 
         # === Tabela principal ===
         wait.until(EC.visibility_of_element_located(
@@ -76,19 +76,24 @@ class SwissReDataProvider:
 
             print(f"📊 {len(linhas)} registros encontrados nesta página")
 
-            for index, item in enumerate(linhas, start=1):
+            for index, linha in enumerate(linhas, start=1):
                 try:
-                    item.find_element(By.TAG_NAME, "td").click()
+                    # === PRIMEIRO: Clica na linha para abrir o modal ===
+                    primeira_celula = linha.find_element(By.TAG_NAME, "td")
+                    primeira_celula.click()
+                    print("🖱️ Clicou na linha para abrir modal")
 
+                    # Aguarda o modal abrir
                     modal = wait.until(EC.visibility_of_element_located(
                         (By.CSS_SELECTOR, 'div[ng-show-360="exibeModal"]')
                     ))
+                    print("✅ Modal aberto com sucesso")
 
                     wait.until(EC.presence_of_all_elements_located(
                         (By.XPATH, "//span[@class='insp360-exibe-textarea ng-binding']")
                     ))
 
-                    # === coleta de dados ===
+                    # === SEGUNDO: coleta de dados do modal (aba Informações) ===
                     seguradora_nome = modal.find_elements(
                         By.CSS_SELECTOR,
                         'span[ng-if="campo == campoDinamicoResumo.seguradora"]')[1].text
@@ -104,15 +109,23 @@ class SwissReDataProvider:
                     spans = modal.find_elements(
                         By.XPATH, "//span[@class='insp360-exibe-textarea ng-binding']"
                     )
-                    area_segurada_total = spans[1].text
-                    numero_sinistro = spans[4].text
-                    data_aviso_sinistro = spans[6].text
-                    data_ocorrencia = spans[7].text
-                    evento = spans[8].text
-                    cultura = spans[9].text
-                    produtividade_estimada = spans[10].text
-                    numero_aviso = spans[11].text
-                    cobertura_sinistrada = spans[12].text
+
+                    # Coleta os dados com tratamento de erro para índices
+                    try:
+                        area_segurada_total = spans[1].text if len(spans) > 1 else ""
+                        numero_sinistro = spans[4].text if len(spans) > 4 else ""
+                        data_aviso_sinistro = spans[6].text if len(spans) > 6 else ""
+                        data_ocorrencia = spans[7].text if len(spans) > 7 else ""
+                        evento = spans[8].text if len(spans) > 8 else ""
+                        cultura = spans[9].text if len(spans) > 9 else ""
+                        produtividade_estimada = spans[10].text if len(spans) > 10 else ""
+                        numero_aviso = spans[11].text if len(spans) > 11 else ""
+                        cobertura_sinistrada = spans[12].text if len(spans) > 12 else ""
+                    except IndexError as e:
+                        print(f"⚠️ Erro de índice ao coletar spans: {e}")
+                        # Define valores padrão em caso de erro
+                        area_segurada_total = numero_sinistro = data_aviso_sinistro = data_ocorrencia = ""
+                        evento = cultura = produtividade_estimada = numero_aviso = cobertura_sinistrada = ""
 
                     div_proponente = modal.find_element(
                         By.XPATH, "//div[contains(@ng-repeat, 'proponente in modal.proponentes')]"
@@ -129,6 +142,70 @@ class SwissReDataProvider:
                     nome_corretor = modal.find_elements(
                         By.CSS_SELECTOR,
                         'span[ng-show-360="modal.corretor.telefones.length == 0"]')[1].text
+
+                    # === TERCEIRO: Clica na aba "Local do Risco" ===
+                    print("📍 Navegando para aba 'Local do Risco'...")
+
+                    # Localiza a aba "Local do Risco" pelo texto
+                    aba_local_risco = wait.until(EC.element_to_be_clickable((
+                        By.XPATH,
+                        "//ul[contains(@class, 'nav-tabs')]//a[contains(., 'Local do Risco')]"
+                    )))
+                    aba_local_risco.click()
+                    print("✅ Clicou na aba 'Local do Risco'")
+
+                    # Aguarda o conteúdo da aba carregar
+                    time.sleep(1)
+
+                    # === QUARTO: Extrai UF e Município da aba Local do Risco ===
+                    municipio = ""
+                    uf = ""
+
+                    try:
+                        # Encontra a última div com classe "row" dentro da seção de Local do Risco
+                        # Esta é a linha que contém Estado e Município
+                        ultima_linha = modal.find_element(By.XPATH,
+                                                          ".//div[contains(@class, 'insp360-form')]//div[contains(@class, 'row')][last()]"
+                                                          )
+
+                        # Pega todas as divs com ng-binding dentro da última linha
+                        elementos = ultima_linha.find_elements(By.CLASS_NAME, 'ng-binding')
+
+                        # A segunda div contém o Estado (UF)
+                        if len(elementos) >= 2:
+                            uf = elementos[1].text.strip()
+                            print(f"📍 UF encontrada: '{uf}'")
+
+                        # A quarta div contém o Município
+                        if len(elementos) >= 4:
+                            municipio = elementos[3].text.strip()
+                            print(f"🏙️ Município encontrado: '{municipio}'")
+
+                    except Exception as e:
+                        print(f"⚠️ Erro ao buscar UF e Município: {e}")
+                        # Tenta método alternativo caso o primeiro falhe
+                        try:
+                            linhas_local_risco = modal.find_elements(By.XPATH, ".//div[contains(@class, 'row')]")
+                            for linha_div in linhas_local_risco:
+                                if "Estado" in linha_div.text:
+                                    elementos = linha_div.find_elements(By.CLASS_NAME, 'ng-binding')
+                                    if len(elementos) >= 2:
+                                        uf = elementos[1].text.strip()
+                                if "Município" in linha_div.text:
+                                    elementos = linha_div.find_elements(By.CLASS_NAME, 'ng-binding')
+                                    if len(elementos) >= 4:
+                                        municipio = elementos[3].text.strip()
+                        except Exception as e2:
+                            print(f"⚠️ Método alternativo também falhou: {e2}")
+
+                    # Validação dos dados
+                    if len(uf) > 2:
+                        print(f"⚠️ UF muito longa: '{uf}', truncando para 2 caracteres")
+                        uf = uf[:2]
+
+                    if len(municipio) > 100:
+                        print(f"⚠️ Município muito longo: '{municipio}', truncando")
+                        municipio = municipio[:100]
 
                     pericia = Pericia(
                         seguradora_nome=seguradora_nome,
@@ -147,10 +224,12 @@ class SwissReDataProvider:
                         telefone_proponente=telefone_proponente,
                         cpf_cnpj_proponente=cpf_cnpj_proponente,
                         nome_corretor=nome_corretor,
+                        municipio=municipio,
+                        uf=uf
                     )
 
                     pericia_lista.append(pericia)
-                    print(f"✅ {index}/{len(linhas)} perícia coletada nesta página")
+                    print(f"✅ {index}/{len(linhas)} perícia coletada - UF: '{uf}', Município: '{municipio}'")
 
                 except Exception as e:
                     print(f"⚠️ Erro ao processar item {index}: {e}")
@@ -162,9 +241,10 @@ class SwissReDataProvider:
                         close_btn = self.driver.find_element(By.CSS_SELECTOR, 'i[ng-click*="fecharModal"]')
                         if close_btn.is_displayed():
                             close_btn.click()
-                            time.sleep(0.5)  # Aumentado para garantir que o modal feche
-                    except Exception:
-                        pass
+                            time.sleep(0.5)
+                            print("🔒 Modal fechado")
+                    except Exception as e:
+                        print(f"⚠️ Erro ao fechar modal: {e}")
 
         # --- Loop de páginas ---
         pagina_atual = 1
@@ -178,11 +258,9 @@ class SwissReDataProvider:
             tem_proxima_pagina = False
 
             try:
-                # Procura o botão de próxima página
                 btn_proxima = self.driver.find_element(By.CSS_SELECTOR, "li.pagination-next a")
                 parent_li = btn_proxima.find_element(By.XPATH, "..")
 
-                # Verifica se o botão está desabilitado
                 classes = parent_li.get_attribute("class") or ""
                 if "disabled" in classes:
                     print("✅ Última página alcançada (botão desabilitado)")
@@ -204,11 +282,9 @@ class SwissReDataProvider:
                         tentativa += 1
                         print(f"🔄 Tentativa {tentativa} de ir para página {pagina_atual + 1}...")
 
-                        # Scroll até o botão
                         self.driver.execute_script("arguments[0].scrollIntoView(true);", btn_proxima)
                         time.sleep(0.5)
 
-                        # Pega referência da primeira linha da tabela atual
                         try:
                             tbody_antes = self.driver.find_element(
                                 By.CSS_SELECTOR, "table.insp360-grid-primeira-tabela tbody"
@@ -218,14 +294,11 @@ class SwissReDataProvider:
                         except:
                             texto_primeira_linha_antes = None
 
-                        # Clica no botão
                         self.driver.execute_script("arguments[0].click();", btn_proxima)
                         print("🖱️ Clique executado, aguardando carregamento...")
 
-                        # Aguarda um tempo fixo para a página processar
                         time.sleep(2)
 
-                        # Verifica se a tabela foi atualizada (conteúdo diferente)
                         try:
                             tbody_depois = WebDriverWait(self.driver, 8).until(
                                 EC.presence_of_element_located(
@@ -233,14 +306,12 @@ class SwissReDataProvider:
                                 )
                             )
 
-                            # Aguarda ter pelo menos uma linha
                             WebDriverWait(self.driver, 5).until(
                                 lambda d: len(d.find_elements(
                                     By.CSS_SELECTOR, "table.insp360-grid-primeira-tabela tbody tr"
                                 )) > 0
                             )
 
-                            # Verifica se o conteúdo mudou
                             primeira_linha_depois = tbody_depois.find_element(By.TAG_NAME, "tr")
                             texto_primeira_linha_depois = primeira_linha_depois.text
 
