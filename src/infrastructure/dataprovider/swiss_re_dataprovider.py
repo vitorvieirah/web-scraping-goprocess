@@ -5,12 +5,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from src.domain.pericia import Pericia
+import re
 
 logger = logging.getLogger(__name__)
 
 
 class SwissReDataProvider:
-    def __init__(self, driver,):
+    def __init__(self, driver, ):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 12)
 
@@ -88,6 +89,15 @@ class SwissReDataProvider:
                         (By.XPATH, "//span[@class='insp360-exibe-textarea ng-binding']")
                     ))
 
+                    titulo = modal.find_elements(
+                        By.CSS_SELECTOR,
+                        "h3.insp360-cor-cinza.insp360-padding-top-5.ng-binding"
+                    ).text
+
+                    match = re.search(r"#\w+", titulo)
+
+                    identificador_unico = match.group(0) if match else None
+
                     # === coleta de dados ===
                     seguradora_nome = modal.find_elements(
                         By.CSS_SELECTOR,
@@ -147,6 +157,7 @@ class SwissReDataProvider:
                         telefone_proponente=telefone_proponente,
                         cpf_cnpj_proponente=cpf_cnpj_proponente,
                         nome_corretor=nome_corretor,
+                        identificador_unico=identificador_unico
                     )
 
                     pericia_lista.append(pericia)
