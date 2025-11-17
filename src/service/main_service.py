@@ -1,5 +1,6 @@
 from src.config.database import Base, engine, SessionLocal
 from src.infrastructure.browser.browser_manager import BrowserManager
+from src.infrastructure.dataprovider.btg_dataprovider import BtgDataProvider
 from src.infrastructure.dataprovider.gclaims_dataprovider import GclaimsDataProvider
 from src.infrastructure.dataprovider.swiss_re_dataprovider import SwissReDataProvider
 from src.infrastructure.dataprovider.usuario_dataprovider import UsuarioDataProvider
@@ -35,17 +36,19 @@ class MainService:
                 print(f"\n--- Processando seguradora {seg_index}: {seguradora.nome} ---")
 
                 # 🔹 Novo navegador para cada seguradora
-                browser = BrowserManager(headless=True)
+                browser = BrowserManager(headless=False)
                 driver = browser.get_driver()
 
                 try:
                     swiss_re_data_provider = SwissReDataProvider(driver)
                     gclaims_data_provider = GclaimsDataProvider(driver)
+                    btg_data_provider = BtgDataProvider(driver)
 
                     webscraping_service = WebscrapingService(
                         pericia_service=self.pericia_service,
                         swiss_re_data_provider=swiss_re_data_provider,
                         gclaims_data_provider=gclaims_data_provider,
+                        btg_data_provider=btg_data_provider,
                     )
 
                     # 🔹 Agora processa apenas essa seguradora
