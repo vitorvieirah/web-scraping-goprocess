@@ -10,7 +10,7 @@ import re
 logger = logging.getLogger(__name__)
 
 
-class SwissReDataProvider:
+class BtgDataProvider:
     def __init__(self, driver, ):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 12)
@@ -40,15 +40,15 @@ class SwissReDataProvider:
                 By.XPATH,
                 "//div[contains(@class, 'insp360-mouse-link') and contains(@class, 'clients')]"
             ))
-        )[1]
+        )[0]
         seguradora_btn.click()
 
-        entrar_btn = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "(//div[contains(@class,'row')]/div[contains(@class,'col-3')])[1]//div[text()='ENTRAR']")
-            )
-        )
-        entrar_btn.click()
+        # entrar_btn = wait.until(
+        #     EC.element_to_be_clickable(
+        #         (By.XPATH, "(//div[contains(@class,'row')]/div[contains(@class,'col-3')])[1]//div[text()='ENTRAR']")
+        #     )
+        # )
+        # entrar_btn.click()
 
         # === Seleciona aba "Aguardando Aceite" ===
         div_aguardando_aceite = wait.until(EC.element_to_be_clickable((
@@ -59,6 +59,16 @@ class SwissReDataProvider:
             "//div[contains(@ng-click, 'filtrarInspecoesPorContador')]"
         )))
         div_aguardando_aceite.click()
+
+        # # === Seleciona aba "Sem Agendamento" ===
+        # div_sem_agendamento = wait.until(EC.element_to_be_clickable((
+        #     By.XPATH,
+        #     "//div[contains(@class, 'panel-heading')]"
+        #     "[.//span[contains(text(), 'Sem Agendamento')]]"
+        #     "/following-sibling::div[contains(@class, 'panel-body')]"
+        #     "//div[contains(@ng-click, 'filtrarInspecoesSemAgendamento')]"
+        # )))
+        # div_sem_agendamento.click()
 
         # === Tabela principal ===
         wait.until(EC.visibility_of_element_located(
