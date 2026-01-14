@@ -96,17 +96,19 @@ if __name__ == "__main__":
 
     service = MainService(usuario_service, seguradora_service, pericia_service)
 
-    print("\n=== MENU ===")
-    print("1. Cadastrar Seguradora")
-    print("2. Listar Seguradoras")
-    print("3. Rodar automação")
-    opcao = input("Escolha: ")
+    # print("\n=== MENU ===")
+    # print("1. Cadastrar Seguradora")
+    # print("2. Listar Seguradoras")
+    # print("3. Rodar automação")
+    # opcao = input("Escolha: ")
+    #
+    # if opcao == "1":
+    #     service.cadastrar_seguradora()
+    # elif opcao == "2":
+    #     service.listar_seguradoras()
+    # elif opcao == "3":
+    #     service.coletar_dados()
+    # else:
+    #     print("Opção inválida!")
 
-    if opcao == "1":
-        service.cadastrar_seguradora()
-    elif opcao == "2":
-        service.listar_seguradoras()
-    elif opcao == "3":
-        service.coletar_dados()
-    else:
-        print("Opção inválida!")
+    service.coletar_dados()
