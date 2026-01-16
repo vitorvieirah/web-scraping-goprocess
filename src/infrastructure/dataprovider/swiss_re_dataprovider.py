@@ -43,13 +43,6 @@ class SwissReDataProvider:
         )[1]
         seguradora_btn.click()
 
-        entrar_btn = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "(//div[contains(@class,'row')]/div[contains(@class,'col-3')])[1]//div[text()='ENTRAR']")
-            )
-        )
-        entrar_btn.click()
-
         # === Seleciona aba "Aguardando Aceite" ===
         div_aguardando_aceite = wait.until(EC.element_to_be_clickable((
             By.XPATH,
