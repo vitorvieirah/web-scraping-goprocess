@@ -56,8 +56,6 @@ class WebscrapingService:
                     username=seguradora.user_credencial
                 )
 
-                self.gclaims_data_provider.raspar()
-
                 dados = self.gclaims_data_provider.raspar()
 
                 for pericia in dados:

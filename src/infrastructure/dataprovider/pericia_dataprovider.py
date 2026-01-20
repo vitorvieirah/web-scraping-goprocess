@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from src.config.database import SessionLocal
 from src.domain.pericia import Pericia
+from src.infrastructure.entity.pericia_entity import PericiaEntity
 from src.infrastructure.exception.DataProviderException import DataProviderException
 from src.infrastructure.mapper.mapper_pericia import PericiaMapper
 
@@ -17,6 +18,18 @@ class PericiaDataprovider:
         session = SessionLocal()
         pericia_entity = self.pericia_mapper.para_entity(domain=pericia)
         try:
+            if pericia.seguradora_id and pericia.identificador_unico:
+                existe = session.query(PericiaEntity).filter(
+                    PericiaEntity.seguradora_id == pericia.seguradora_id,
+                    PericiaEntity.identificador_unico == pericia.identificador_unico
+                ).first()
+
+                if existe:
+                    logger.warning(
+                        f"⚠️ Perícia GCLAIMS duplicada ignorada: {pericia.identificador_unico}"
+                    )
+                    return None
+
             persisted_entity = session.merge(pericia_entity)
             session.commit()
             return self.pericia_mapper.para_domain(entity=persisted_entity)
