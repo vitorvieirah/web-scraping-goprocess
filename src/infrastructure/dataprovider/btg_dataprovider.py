@@ -43,21 +43,13 @@ class BtgDataProvider:
         )[0]
         seguradora_btn.click()
 
-        # entrar_btn = wait.until(
-        #     EC.element_to_be_clickable(
-        #         (By.XPATH, "(//div[contains(@class,'row')]/div[contains(@class,'col-3')])[1]//div[text()='ENTRAR']")
-        #     )
-        # )
-        # entrar_btn.click()
-
         # === Seleciona aba "Aguardando Aceite" ===
-        div_aguardando_aceite = wait.until(EC.element_to_be_clickable((
-            By.XPATH,
-            "//div[contains(@class, 'panel-heading')]"
-            "[.//span[contains(text(), 'Aguardando Aceite')]]"
-            "/following-sibling::div[contains(@class, 'panel-body')]"
-            "//div[contains(@ng-click, 'filtrarInspecoesPorContador')]"
-        )))
+        div_aguardando_aceite = wait.until(
+            EC.element_to_be_clickable((
+                By.XPATH,
+                "//div[@ng-click='filtrarInspecoesPorContador(contador.agu_aceite_prest)']"
+            ))
+        )
         div_aguardando_aceite.click()
 
         # # === Seleciona aba "Sem Agendamento" ===
@@ -105,7 +97,7 @@ class BtgDataProvider:
                     ))
 
                     # === SEGUNDO: coleta de dados do modal (aba Informações) ===
-                    titulo = modal.find_elements(
+                    titulo = modal.find_element(
                         By.CSS_SELECTOR,
                         "h3.insp360-cor-cinza.insp360-padding-top-5.ng-binding"
                     ).text
@@ -261,12 +253,15 @@ class BtgDataProvider:
                     # Fecha o modal com segurança
                     try:
                         close_btn = self.driver.find_element(By.CSS_SELECTOR, 'i[ng-click*="fecharModal"]')
-                        if close_btn.is_displayed():
-                            close_btn.click()
-                            time.sleep(0.5)
-                            print("🔒 Modal fechado")
+                        self.driver.execute_script("arguments[0].click();", close_btn)
+                        wait.until(
+                            EC.invisibility_of_element_located(
+                                (By.CSS_SELECTOR, 'div[uib-modal-window="modal-window"]')
+                            )
+                        )
+                        print("🔒 Modal fechado e DOM liberado")
                     except Exception as e:
-                        print(f"⚠️ Erro ao fechar modal: {e}")
+                        print(f"⚠️ Erro ao fechar modal corretamente: {e}")
 
         # --- Loop de páginas ---
         pagina_atual = 1
