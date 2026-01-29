@@ -180,8 +180,7 @@ class GclaimsDataProvider:
                     data_formatada = data_entrada_str.replace('/', '').replace('-', '').replace(':', '').replace(' ', '_').strip()
                     identificador_unico = f"{processo_str}_{data_formatada}"
                 else:
-                    identificador_unico = processo_str if processo_str != "N/A" else f"SINISTRO_{i+1}"
-                    print(f"⚠️ Usando fallback para identificador: {identificador_unico}")
+                    identificador_unico = None
 
                 self.driver.close()
                 self.driver.switch_to.window(main_window)
