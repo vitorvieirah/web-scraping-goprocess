@@ -180,8 +180,14 @@ class GclaimsDataProvider:
                     data_formatada = data_entrada_str.replace('/', '').replace('-', '').replace(':', '').replace(' ', '_').strip()
                     identificador_unico = f"{processo_str}_{data_formatada}"
                 else:
-                    identificador_unico = None
+                    self.driver.close()
+                    self.driver.switch_to.window(main_window)
 
+                    # Lança a exceção que será capturada pelo 'except Exception as e' lá embaixo
+                    raise ValueError(
+                        f"Identificador Único não disponível: Processo={processo_str}, Data={data_entrada_str}")
+
+                # Se chegou aqui, é porque o IF foi verdadeiro (não houve Exception)
                 self.driver.close()
                 self.driver.switch_to.window(main_window)
 
